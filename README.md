@@ -1,7 +1,4 @@
-# llocer_cso
+# llocer_ev_examples
 
-UNDER CONSTRUCTION
+Examples of implementation of OCPP and OCPI services.
 
-Charging Station Operator for Electrical Vehicles
-- Supports EVSE's using OCPP protocol 
-- and, optionally, communication with eMSP using OCPI protocol

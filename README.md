@@ -4,7 +4,8 @@ The following examples are provided on this repository:
 
 - OcppExample.java: Implementation of an OCPP websocket server using librarian [llocer_ocpp](https://github.com/Llocer/llocer_ocpp).
 - ocpp_test1.py: python script to simulate an OCPP client.
-- OcpiExample.java: Implementation of an OCPI node using librarian [llocer_ocpi](https://github.com/Llocer/llocer_ocpi).
+- OcpiTestLocationReceiver: Implementation of a OCPI node with the modules: Versions, Credentials and Locations (receiver interface).
+- OcpiTestLocationSener: Implementation of a OCPI node with the modules: Versions, Credentials and Locations (sender interface).
  
 Detailed descriptions are provided below.
 
@@ -41,8 +42,13 @@ Before to use, modify line "server_url=" with the correct URL of your server.
 
 Run as `./ocpp_test1.py` from command line. 
 
-## OCPI node
+## OCPI location receiver
+
+File OcpiTestLocationReceiver contains the implementation of a OCPI servlet with the modules: Versions, Credentials and Locations (receiver interface).
+
+## OCPI location sender
+
+File OcpiTestLocationSender contains the implementation of a OCPI servlet with the modules: Versions, Credentials and Locations (receiver sender).
 
 
-## OCPI client
 

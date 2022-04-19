@@ -4,13 +4,19 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 import com.llocer.collections.MemorySimpleMapFactory;
+import com.llocer.common.Log;
 import com.llocer.common.SimpleMap;
 import com.llocer.ev.ocpi.modules.OcpiCredentialsModule;
+import com.llocer.ev.ocpi.modules.OcpiLocationsReceiverModule;
+import com.llocer.ev.ocpi.modules.OcpiLocationsReceiverModule.OcpiLocationsReceiver;
 import com.llocer.ev.ocpi.msgs22.OcpiClientInfo;
+import com.llocer.ev.ocpi.msgs22.OcpiConnector;
 import com.llocer.ev.ocpi.msgs22.OcpiCredentials;
 import com.llocer.ev.ocpi.msgs22.OcpiCredentialsRole;
 import com.llocer.ev.ocpi.msgs22.OcpiEndpoint;
 import com.llocer.ev.ocpi.msgs22.OcpiEndpoints;
+import com.llocer.ev.ocpi.msgs22.OcpiEvse;
+import com.llocer.ev.ocpi.msgs22.OcpiLocation;
 import com.llocer.ev.ocpi.msgs22.OcpiVersions;
 import com.llocer.ev.ocpi.server.OcpiAgentId;
 import com.llocer.ev.ocpi.server.OcpiConfig;
@@ -20,21 +26,50 @@ import com.llocer.ev.ocpi.server.OcpiResult;
 import com.llocer.ev.ocpi.server.OcpiResult.OcpiResultEnum;
 import com.llocer.ev.ocpi.server.OcpiServlet;
 
-public class OcpiExample extends OcpiServlet {
+public class OcpiTestLocationReceiver extends OcpiServlet implements OcpiLocationsReceiver {
 
 	private static final long serialVersionUID = -4764547316713059395L;
 	
 	// in order to skip URI.resolve problems, do not use initial slash and end by slash:
-	private static final String servletPath = "example/ocpi/"; 
+	static final String servletPath = "ocpi/eMSP/"; 
 	private static final String servletPath221 = servletPath+"221/";
+
+	private static final OcpiEndpoints endpoints = initEndpoints();
 
 	private static final SimpleMap< String /*own token*/, OcpiLink > linksByToken = 
 			MemorySimpleMapFactory.make( String.class, OcpiLink.class);
-
 	private static final OcpiCredentialsModule ocpiCredentialsModule = new OcpiCredentialsModule(linksByToken); 
+	
+	private final SimpleMap<String /*locationId*/,OcpiLocation> locations;
+	private final OcpiLocationsReceiverModule locationsReceiverModule;
 
+	public static OcpiLink makeLink() {
+		OcpiLink link = new OcpiLink();
+		
+		link.ownId = new OcpiAgentId( "ES", "MSP" );
+		link.ownCredentials = new OcpiCredentials();
+		link.ownCredentials.setUrl( OcpiConfig.getPublicURI().resolve( servletPath ) );
+		
+		OcpiCredentialsRole cpoRole = new OcpiCredentialsRole();
+		cpoRole.setRole( OcpiClientInfo.Role.EMSP ); 
+		cpoRole.setCountryCode( link.ownId.countryCode );
+		cpoRole.setPartyId( link.ownId.partyId );		
+		link.ownCredentials.setRoles( Collections.singletonList( cpoRole ) );
+		
+		link.ownCredentials.setToken( "Token TMP" );
+		
+		ocpiCredentialsModule.allowLink( link );
+
+		return link;
+	}
+	
+	public OcpiTestLocationReceiver() {
+		this.locations = MemorySimpleMapFactory.make( String.class, OcpiLocation.class );
+		this.locationsReceiverModule = new OcpiLocationsReceiverModule( this );
+	}
+	
 	/*
-	 * version and credentials
+	 * versions and endpoints
 	 */
 
 	@Override
@@ -45,8 +80,7 @@ public class OcpiExample extends OcpiServlet {
 		return new OcpiVersions[] { answer };
 	}
 
-	@Override
-	protected OcpiEndpoints getEndpoints( String version ) {
+	private static OcpiEndpoints initEndpoints() {
 		OcpiEndpoints endpoints = new OcpiEndpoints();
 		endpoints.setVersion( OcpiEndpoints.Version._2_2_1 );
 		endpoints.setEndpoints( new LinkedList<OcpiEndpoint>() );
@@ -64,13 +98,8 @@ public class OcpiExample extends OcpiServlet {
 		endpoints.getEndpoints().add( endpoint );
 
 		endpoint = new OcpiEndpoint();
-		endpoint.setIdentifier( OcpiEndpoint.Identifier.TARIFFS );
+		endpoint.setIdentifier( OcpiEndpoint.Identifier.LOCATIONS );
 		endpoint.setRole( OcpiEndpoint.InterfaceRole.SENDER );
-		endpoints.getEndpoints().add( endpoint );
-
-		endpoint = new OcpiEndpoint();
-		endpoint.setIdentifier( OcpiEndpoint.Identifier.TOKENS );
-		endpoint.setRole( OcpiEndpoint.InterfaceRole.RECEIVER );
 		endpoints.getEndpoints().add( endpoint );
 
 		for( OcpiEndpoint e : endpoints.getEndpoints() ) {
@@ -80,16 +109,24 @@ public class OcpiExample extends OcpiServlet {
 		
 		return endpoints;
 	}
+	
+	@Override
+	protected OcpiEndpoints getEndpoints( String version ) {
+		return endpoints;
+	}
 
 	/*
-	 * agents & execution
+	 * execution of modules and pagination
 	 */
 	
 	@Override
 	protected OcpiResult<?> execute( OcpiRequestData oreq ) throws Exception {
-		return OcpiResultEnum.NOT_SUPPORTED_ENDPOINT;
+		switch( oreq.module ) {
+			case LOCATIONS: return locationsReceiverModule.receiverInterface( oreq );
+			default: return OcpiResultEnum.NOT_SUPPORTED_ENDPOINT;
+		}
 	}
-
+	
 	/*
 	 * links & credentials
 	 */
@@ -104,21 +141,27 @@ public class OcpiExample extends OcpiServlet {
 		return ocpiCredentialsModule.commonInterface(oreq);
 	}
 
-	static {
-		OcpiLink link = new OcpiLink();
-		
-		link.ownId = new OcpiAgentId( "ES", "TST" );
-		link.ownCredentials = new OcpiCredentials();
-		link.ownCredentials.setUrl( OcpiConfig.getPublicURI().resolve( "/example/ocpi/" ) );
-		
-		OcpiCredentialsRole cpoRole = new OcpiCredentialsRole();
-		cpoRole.setRole( OcpiClientInfo.Role.OTHER ); 
-		cpoRole.setCountryCode( link.ownId.countryCode );
-		cpoRole.setPartyId( link.ownId.partyId );		
-		link.ownCredentials.setRoles( Collections.singletonList( cpoRole ) );
-		
-		link.ownCredentials.setToken( "TEST" );
-		
-		ocpiCredentialsModule.allowLink( link );
+	/*
+	 * implement locations receiver
+	 */
+	
+	@Override
+	public OcpiLocation getOcpiLocation(String locationId) {
+		return locations.get( locationId );
+	}
+
+	@Override
+	public void updateLocation(OcpiLocation location, OcpiLocation delta) {
+		Log.debug( "updateLocation: %s", location );
+	}
+
+	@Override
+	public void updateEvse(OcpiLocation location, OcpiEvse evse, OcpiEvse delta) {
+		Log.debug( "updateEvse: %s", evse );
+	}
+
+	@Override
+	public void updateConnector(OcpiLocation location, OcpiEvse evse, OcpiConnector connector, OcpiConnector delta) {
+		Log.debug( "updateConnector: %s", connector );
 	}
 }

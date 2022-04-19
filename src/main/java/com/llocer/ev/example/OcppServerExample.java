@@ -13,12 +13,12 @@ import com.llocer.ev.ocpp.server.OcppEndpoint;
 import com.llocer.ev.ocpp.server.OcppError;
 import com.llocer.ev.ocpp.server.OcppMsg.OcppErrorCode;
 
-public class OcppExample implements OcppAgent {
+public class OcppServerExample implements OcppAgent {
 	
 	private OcppEndpoint ocppEndpoint = null;
 	
 	static {
-		OcppExample it = new OcppExample();
+		OcppServerExample it = new OcppServerExample();
 		OcppEndpoint.putAgent( it );
 	}
 

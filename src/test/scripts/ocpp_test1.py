@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-#server_url="ws://127.0.0.1:8080/llocer_cso_war/example/ocpp/RDAM%20123"
 server_url="ws://127.0.0.1:8080/llocer_cso_war/cso/ocpp/CS1"
 
 import websocket # pip3 install websocket-client

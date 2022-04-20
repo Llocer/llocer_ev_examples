@@ -1,13 +1,11 @@
 package com.llocer.ev.example;
 
 import java.net.URI;
-import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.llocer.collections.MemorySimpleMapFactory;
-import com.llocer.common.Log;
 import com.llocer.common.SimpleMap;
 import com.llocer.ev.ocpi.modules.OcpiCredentialsModule;
 import com.llocer.ev.ocpi.modules.OcpiLocationsSenderModule;
@@ -30,7 +28,6 @@ import com.llocer.ev.ocpi.server.OcpiRequestData;
 import com.llocer.ev.ocpi.server.OcpiResult;
 import com.llocer.ev.ocpi.server.OcpiResult.OcpiResultEnum;
 import com.llocer.ev.ocpi.server.OcpiServlet;
-import com.llocer.ev.ocpi.server.OcpiRequestData.HttpMethod;
 
 public class OcpiTestLocationSender extends OcpiServlet implements OcpiLocationsSender {
 
@@ -46,12 +43,17 @@ public class OcpiTestLocationSender extends OcpiServlet implements OcpiLocations
 			MemorySimpleMapFactory.make( String.class, OcpiLink.class);
 	private static final OcpiCredentialsModule ocpiCredentialsModule = new OcpiCredentialsModule(linksByToken); 
 	
+	private static OcpiTestLocationSender me = null; // only for testing
+	
+
 	private final SimpleMap<String /*locationId*/,OcpiLocation> locations;
 	private final OcpiLocationsSenderModule locationsSenderModule;
 
 	public OcpiTestLocationSender() {
 		this.locations = MemorySimpleMapFactory.make( String.class, OcpiLocation.class );
 		this.locationsSenderModule = new OcpiLocationsSenderModule( this );
+		
+		OcpiTestLocationSender.me = this;
 	}
 	
 	/*
@@ -149,16 +151,25 @@ public class OcpiTestLocationSender extends OcpiServlet implements OcpiLocations
 		return ocpiCredentialsModule.commonInterface(oreq);
 	}
 
+	/*
+	 * implement OcpiLocationsSender
+	 */
+	
 	@Override
 	public OcpiLocation getOcpiLocation(String locationId) {
 		return locations.get( locationId );
 	}
 
 	/*
-	 * open received link and send a location
+	 * TEST: open link to OcppTestLocationReceiver node and send a location
 	 */
 	
-	public static OcpiLink makeLink() {
+	public static void test1() throws Exception {
+		
+		/*
+		 * define link to OcppTestLocationReceiver node
+		 */
+		
 		OcpiLink link = new OcpiLink();
 		
 		link.ownId = new OcpiAgentId( "ES", "CPO" );
@@ -174,18 +185,18 @@ public class OcpiTestLocationSender extends OcpiServlet implements OcpiLocations
 		link.ownCredentials.setToken( OcpiCredentialsModule.makeRandomToken() );
 		
 		ocpiCredentialsModule.allowLink( link );
-
-		return link;
-	}
-
-	public static void test1() throws Exception {
-		OcpiLink link = OcpiTestLocationSender.makeLink();
 		
 		link.peerCredentials = new OcpiCredentials();
 		link.peerCredentials.setUrl( OcpiConfig.getPublicURI().resolve( OcpiTestLocationReceiver.servletPath ) );
-		link.peerCredentials.setToken( "Token TMP" );
+		link.peerCredentials.setToken( OcpiTestLocationReceiver.initialToken );
 		
-		ocpiCredentialsModule.sendCredentials( link );
+		ocpiCredentialsModule.sendCredentials( link ); // send credentials to OcppTestLocationReceiver peer
+		
+		/*
+		 * send a locations to the peer
+		 */
+		
+		OcpiTestLocationSender.me.locationsSenderModule.addReceiver(link);
 		
 		OcpiLocation location = new OcpiLocation();
 		location.setId( "myLocation" );
@@ -193,14 +204,7 @@ public class OcpiTestLocationSender extends OcpiServlet implements OcpiLocations
 		location.setPartyId( link.ownId.partyId );
 		location.setAddress( "Barrio sesamo");
 		
-		link.makeBuilder()
-				.uri( Identifier.LOCATIONS )
-				.parameter( location.getCountryCode() )
-				.parameter( location.getPartyId() )
-				.parameter( location.getId() )
-				.method​( HttpMethod.PUT, location )
-				.send( Void.class );
-
+		OcpiTestLocationSender.me.locationsSenderModule.reportLocationChange(location);
 	}
 	
 }

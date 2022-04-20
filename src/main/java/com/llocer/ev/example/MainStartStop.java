@@ -34,8 +34,7 @@ public class MainStartStop implements ServletContextListener {
 	    TimerTask task = new TimerTask() {
 	        public void run() {
 	        	try {
-	        		OcpiLink receiverLink = OcpiTestLocationReceiver.makeLink();
-	        		
+	        		OcpiTestLocationReceiver.makeLink();
 					OcpiTestLocationSender.test1();
 				} catch (Exception e) {
 					Log.debug( e, "Test exception" );

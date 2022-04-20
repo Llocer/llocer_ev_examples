@@ -2,10 +2,13 @@
 
 The following examples are provided on this repository:
 
+OCPP related:
 - OcppExample.java: Implementation of an OCPP websocket server using librarian [llocer_ocpp](https://github.com/Llocer/llocer_ocpp).
 - ocpp_test1.py: python script to simulate an OCPP client.
-- OcpiTestLocationReceiver: Implementation of a OCPI node with the modules: Versions, Credentials and Locations (receiver interface).
-- OcpiTestLocationSener: Implementation of a OCPI node with the modules: Versions, Credentials and Locations (sender interface).
+
+OCPI related:
+- OcpiTestLocationReceiver: Implementation of a OCPI node with the modules: Versions, Credentials and Locations (receiver interface) using librarian [llocer_ocpi](https://github.com/Llocer/llocer_ocpi).
+- OcpiTestLocationSener: Implementation of a OCPI node with the modules: Versions, Credentials and Locations (sender interface) using same librarian.
  
 Detailed descriptions are provided below.
 
@@ -44,7 +47,26 @@ Run as `./ocpp_test1.py` from command line.
 
 ## OCPI location receiver
 
-File OcpiTestLocationReceiver contains the implementation of a OCPI servlet with the modules: Versions, Credentials and Locations (receiver interface).
+File OcpiTestLocationReceiver.java contains the implementation of a OCPI node with the modules: Versions, Credentials and Locations (receiver interface).
+
+This class extends the class OcpiServlet for OCPI node functionality and implements the interface OcpiLocationsReceiver to allow use of the module that provides the locations receiver interface. 
+
+In order, to extend the OcpiServlet class, some abstract methods must be implemented:
+
+- `OcpiVersions[] getVersions()` : must return the supported OCPI versions and their URL's.
+- `OcpiEndpoints getEndpoints( String version )`: must return the supported interfaces for this protocol version.
+- `OcpiLink authorizePeer( String authorization )`: must check if a request with the value of the token given in `authorization` parameter is allowed in this node. Usually, implemented with a single call to the module OcpiCredentialsModule.
+- `OcpiResult<?> executeCredentials(OcpiRequestData oreq)`: execute a query to the credentials interface. Usually, implemented with a single call to the module OcpiCredentialsModule.
+- `OcpiResult<?> execute( OcpiRequestData oreq )`: execute a http query to some module different from versions and credentials. Usually, field `oreq.module` is used to switch between call to the target modules.  
+
+In order to use the librarian module OcpiLocationsReceiver the following methods must be implemented:
+
+- `OcpiLocation getOcpiLocation( String id )` retrive from local database the location with identifier `ìd`.
+- `void updateLocation( OcpiLocation location, OcpiLocation delta )`: update the location `location` with the name received data `delta`
+- `void updateEvse( OcpiLocation location, OcpiEvse evse, OcpiEvse delta )`: update the evse `evse` in location `location` with the name received data `delta` 
+- `void updateConnector( OcpiLocation location, OcpiEvse evse, OcpiConnector connector, OcpiConnector delta )`: update the connection `connection` in the evse `evse` of location `location` with the name received data `delta`  
+
+
 
 ## OCPI location sender
 

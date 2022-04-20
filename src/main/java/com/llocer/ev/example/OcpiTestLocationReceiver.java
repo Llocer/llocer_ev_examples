@@ -33,6 +33,7 @@ public class OcpiTestLocationReceiver extends OcpiServlet implements OcpiLocatio
 	// in order to skip URI.resolve problems, do not use initial slash and end by slash:
 	static final String servletPath = "ocpi/eMSP/"; 
 	private static final String servletPath221 = servletPath+"221/";
+	static final String initialToken = "Token TMP";
 
 	private static final OcpiEndpoints endpoints = initEndpoints();
 
@@ -43,26 +44,6 @@ public class OcpiTestLocationReceiver extends OcpiServlet implements OcpiLocatio
 	private final SimpleMap<String /*locationId*/,OcpiLocation> locations;
 	private final OcpiLocationsReceiverModule locationsReceiverModule;
 
-	public static OcpiLink makeLink() {
-		OcpiLink link = new OcpiLink();
-		
-		link.ownId = new OcpiAgentId( "ES", "MSP" );
-		link.ownCredentials = new OcpiCredentials();
-		link.ownCredentials.setUrl( OcpiConfig.getPublicURI().resolve( servletPath ) );
-		
-		OcpiCredentialsRole cpoRole = new OcpiCredentialsRole();
-		cpoRole.setRole( OcpiClientInfo.Role.EMSP ); 
-		cpoRole.setCountryCode( link.ownId.countryCode );
-		cpoRole.setPartyId( link.ownId.partyId );		
-		link.ownCredentials.setRoles( Collections.singletonList( cpoRole ) );
-		
-		link.ownCredentials.setToken( "Token TMP" );
-		
-		ocpiCredentialsModule.allowLink( link );
-
-		return link;
-	}
-	
 	public OcpiTestLocationReceiver() {
 		this.locations = MemorySimpleMapFactory.make( String.class, OcpiLocation.class );
 		this.locationsReceiverModule = new OcpiLocationsReceiverModule( this );
@@ -115,6 +96,30 @@ public class OcpiTestLocationReceiver extends OcpiServlet implements OcpiLocatio
 		return endpoints;
 	}
 
+	/*
+	 * links
+	 */
+	
+	public static OcpiLink makeLink() {
+		OcpiLink link = new OcpiLink();
+		
+		link.ownId = new OcpiAgentId( "ES", "MSP" );
+		link.ownCredentials = new OcpiCredentials();
+		link.ownCredentials.setUrl( OcpiConfig.getPublicURI().resolve( servletPath ) );
+		
+		OcpiCredentialsRole cpoRole = new OcpiCredentialsRole();
+		cpoRole.setRole( OcpiClientInfo.Role.EMSP ); 
+		cpoRole.setCountryCode( link.ownId.countryCode );
+		cpoRole.setPartyId( link.ownId.partyId );		
+		link.ownCredentials.setRoles( Collections.singletonList( cpoRole ) );
+		
+		link.ownCredentials.setToken( initialToken );
+		
+		ocpiCredentialsModule.allowLink( link );
+
+		return link;
+	}
+	
 	/*
 	 * execution of modules and pagination
 	 */

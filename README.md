@@ -61,7 +61,7 @@ In order, to extend the OcpiServlet class, some abstract methods must be impleme
 
 In order to use the librarian module OcpiLocationsReceiver the following methods must be implemented:
 
-- `OcpiLocation getOcpiLocation( String id )` retrive from local database the location with identifier `ìd`.
+- `OcpiLocation getOcpiLocation( String id )`: retrive from local database the location with identifier `ìd`.
 - `void updateLocation( OcpiLocation location, OcpiLocation delta )`: update the location `location` with the name received data `delta`
 - `void updateEvse( OcpiLocation location, OcpiEvse evse, OcpiEvse delta )`: update the evse `evse` in location `location` with the name received data `delta` 
 - `void updateConnector( OcpiLocation location, OcpiEvse evse, OcpiConnector connector, OcpiConnector delta )`: update the connection `connection` in the evse `evse` of location `location` with the name received data `delta`  
@@ -70,7 +70,18 @@ In order to use the librarian module OcpiLocationsReceiver the following methods
 
 ## OCPI location sender
 
-File OcpiTestLocationSender contains the implementation of a OCPI servlet with the modules: Versions, Credentials and Locations (receiver sender).
+File OcpiTestLocationSender.java contains the implementation of a OCPI servlet with the modules: Versions, Credentials and Locations (receiver sender).
 
+This class extends the class OcpiServlet for OCPI node functionality and implements the interface OcpiLocationsSender to allow use of the module that provides the locations sender interface.
+
+See in previous chapter the details about extend class OcpiServlet. In order to use the module OcpiLocationsSender the following methods must be implemented:
+
+- `OcpiLocation getOcpiLocation( String locationId )`: retrive from local database the location with identifier `ìd`.
+
+and the methods necessary for pagination:
+
+- `URI getOcpiModuleUri(InterfaceRole role, Identifier module)`: must return the public URI for the module.
+- `int getOcpiPaginationLimit( Identifier module )`: must return the global limit for pagination.
+- `Iterator<? extends HasLastUpdated> getOcpiItems(OcpiRequestData oreq)`: must return an iterator to available items (locations in this example).
 
 

@@ -33,7 +33,7 @@ OcppExample.java must implement the methods at interface OcppAgent:
 - `void onOcppCallResult( OcppCommand command )` : called when an Ocpp Call Result is returned by the client. No body in this example.
  
 
-** Install and run **
+<strong> Install and run </strong>
 
 The jar with this element together with its dependencies must be loaded in your favorite websocket container (Tomcat, ...), probably packing it in a war file.
 
@@ -66,7 +66,7 @@ and following methods has been implemented to use the librarian module OcpiLocat
 - `void updateEvse( OcpiLocation location, OcpiEvse evse, OcpiEvse delta )`: update the evse `evse` in location `location` with the name received data `delta` 
 - `void updateConnector( OcpiLocation location, OcpiEvse evse, OcpiConnector connector, OcpiConnector delta )`: update the connection `connection` in the evse `evse` of location `location` with the name received data `delta`  
 
-** testing **
+<strong> testing </strong>
 
 The bash script `ocpi_put_location.sh`  contains the curl command to put a new location in previous receiver.
 

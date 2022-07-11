@@ -66,7 +66,9 @@ and following methods has been implemented to use the librarian module OcpiLocat
 - `void updateEvse( OcpiLocation location, OcpiEvse evse, OcpiEvse delta )`: update the evse `evse` in location `location` with the name received data `delta` 
 - `void updateConnector( OcpiLocation location, OcpiEvse evse, OcpiConnector connector, OcpiConnector delta )`: update the connection `connection` in the evse `evse` of location `location` with the name received data `delta`  
 
+** testing **
 
+The bash script `ocpi_put_location.sh`  contains the curl command to put a new location in previous receiver.
 
 ## OCPI location sender
 

@@ -51,7 +51,7 @@ File OcpiTestLocationReceiver.java contains the implementation of a OCPI node wi
 
 This class extends the class OcpiServlet for OCPI node functionality and implements the interface OcpiLocationsReceiver to allow use of the module that provides the locations receiver interface. 
 
-In order, to extend the OcpiServlet class, some abstract methods must be implemented:
+Following methods has been implemented to extend the OcpiServlet class:
 
 - `OcpiVersions[] getVersions()` : must return the supported OCPI versions and their URL's.
 - `OcpiEndpoints getEndpoints( String version )`: must return the supported interfaces for this protocol version.
@@ -59,7 +59,7 @@ In order, to extend the OcpiServlet class, some abstract methods must be impleme
 - `OcpiResult<?> executeCredentials(OcpiRequestData oreq)`: execute a query to the credentials interface. Usually, implemented with a single call to the module OcpiCredentialsModule.
 - `OcpiResult<?> execute( OcpiRequestData oreq )`: execute a http query to some module different from versions and credentials. Usually, field `oreq.module` is used to switch between call to the target modules.  
 
-In order to use the librarian module OcpiLocationsReceiver the following methods must be implemented:
+and following methods has been implemented to use the librarian module OcpiLocationsReceiver:
 
 - `OcpiLocation getOcpiLocation( String id )`: retrive from local database the location with identifier `ìd`.
 - `void updateLocation( OcpiLocation location, OcpiLocation delta )`: update the location `location` with the name received data `delta`
@@ -70,7 +70,7 @@ In order to use the librarian module OcpiLocationsReceiver the following methods
 
 ## OCPI location sender
 
-File OcpiTestLocationSender.java contains the implementation of a OCPI servlet with the modules: Versions, Credentials and Locations (receiver sender).
+File OcpiTestLocationSender.java contains the implementation of a OCPI servlet with the modules: Versions, Credentials and Locations (sender interface).
 
 This class extends the class OcpiServlet for OCPI node functionality and implements the interface OcpiLocationsSender to allow use of the module that provides the locations sender interface.
 

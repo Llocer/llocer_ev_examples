@@ -121,11 +121,6 @@ public class OcpiTestLocationSender extends OcpiServlet implements OcpiLocations
 	}
 
 	@Override
-	public int getOcpiPaginationLimit( Identifier module ) {
-		return OcpiConfig.config.ocpiMaxGetLimit;
-	}
-	
-	@Override
 	public Iterator<? extends HasLastUpdated> getOcpiItems( OcpiRequestData oreq ) {
 		switch( oreq.module ) {
 		case LOCATIONS: 

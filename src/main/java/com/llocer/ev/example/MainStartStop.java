@@ -8,7 +8,6 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import com.llocer.common.Log;
-import com.llocer.ev.ocpi.server.OcpiLink;
 import com.llocer.ev.ocpp.server.OcppEndpoint;
 
 @WebListener

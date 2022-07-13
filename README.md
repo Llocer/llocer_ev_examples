@@ -18,7 +18,7 @@ File OcppExample.java contains a basic implementation of an OCPP service. This s
 
 It implements the interface OcppAgent of the library llocer_ocpp. In this way we implement an Ocpp agent with identiy "CS1" that can be reached at URL http://.../cso/ocpp/CS1
 
-** Implementation details **
+<strong> Implementation details <7strong>
 
 OcppExample.java must implement the methods at interface OcppAgent:
 
@@ -36,6 +36,20 @@ OcppExample.java must implement the methods at interface OcppAgent:
 <strong> Install and run </strong>
 
 The jar with this element together with its dependencies must be loaded in your favorite websocket container (Tomcat, ...), probably packing it in a war file.
+
+Mapping can be included in file web.xml or as annotation. By example:
+
+```
+<servlet>
+  <servlet-name>OcpiTestLocationReceiver</servlet-name>
+  <servlet-class>com.llocer.ev.example.OcpiTestLocationReceiver</servlet-class>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>OcpiTestLocationReceiver</servlet-name>
+  <url-pattern>/example/ocpi/*</url-pattern>
+</servlet-mapping>
+```
 
 ## simulated charging station
 

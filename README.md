@@ -18,7 +18,7 @@ File OcppExample.java contains a basic implementation of an OCPP service. This s
 
 It implements the interface OcppAgent of the library llocer_ocpp. In this way we implement an Ocpp agent with identiy "CS1" that can be reached at URL http://.../cso/ocpp/CS1
 
-<strong> Implementation details <7strong>
+<strong> Implementation details </strong>
 
 OcppExample.java must implement the methods at interface OcppAgent:
 

@@ -107,11 +107,11 @@ public class OcpiTestLocationReceiver extends OcpiServlet implements OcpiLocatio
 		link.ownCredentials = new OcpiCredentials();
 		link.ownCredentials.setUrl( OcpiConfig.getPublicURI().resolve( servletPath ) );
 		
-		OcpiCredentialsRole cpoRole = new OcpiCredentialsRole();
-		cpoRole.setRole( OcpiClientInfo.Role.EMSP ); 
-		cpoRole.setCountryCode( link.ownId.countryCode );
-		cpoRole.setPartyId( link.ownId.partyId );		
-		link.ownCredentials.setRoles( Collections.singletonList( cpoRole ) );
+		OcpiCredentialsRole emspRole = new OcpiCredentialsRole();
+		emspRole.setRole( OcpiClientInfo.Role.EMSP ); 
+		emspRole.setCountryCode( link.ownId.countryCode );
+		emspRole.setPartyId( link.ownId.partyId );		
+		link.ownCredentials.setRoles( Collections.singletonList( emspRole ) );
 		
 		link.ownCredentials.setToken( initialToken );
 		

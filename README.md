@@ -67,10 +67,6 @@ and following methods has been implemented to use the librarian module OcpiLocat
 - `void updateEvse( OcpiLocation location, OcpiEvse evse, OcpiEvse delta )`: update the evse `evse` in location `location` with the name received data `delta` 
 - `void updateConnector( OcpiLocation location, OcpiEvse evse, OcpiConnector connector, OcpiConnector delta )`: update the connection `connection` in the evse `evse` of location `location` with the name received data `delta`  
 
-<strong> testing </strong>
-
-The bash script `ocpi_put_location.sh`  contains the curl command to put a new location in previous receiver.
-
 <strong> Install and run </strong>
 
 Mapping can be included in file web.xml or as annotation. By example:
@@ -87,6 +83,12 @@ Mapping can be included in file web.xml or as annotation. By example:
   <url-pattern>/example/ocpi/*</url-pattern>
 </servlet-mapping>
 ```
+
+You must create a config file /etc/ocpi.conf where define the public URL of the server and the length of the URL in the mapping. See library llocer_ocpi for details.
+
+<strong> testing </strong>
+
+The bash script `ocpi_put_location.sh` contains the curl command to put a new location in previous receiver.
 
 
 ## OCPI location sender

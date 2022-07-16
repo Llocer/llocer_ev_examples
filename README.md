@@ -37,19 +37,6 @@ OcppExample.java must implement the methods at interface OcppAgent:
 
 The jar with this element together with its dependencies must be loaded in your favorite websocket container (Tomcat, ...), probably packing it in a war file.
 
-Mapping can be included in file web.xml or as annotation. By example:
-
-```
-<servlet>
-  <servlet-name>OcpiTestLocationReceiver</servlet-name>
-  <servlet-class>com.llocer.ev.example.OcpiTestLocationReceiver</servlet-class>
-</servlet>
-
-<servlet-mapping>
-  <servlet-name>OcpiTestLocationReceiver</servlet-name>
-  <url-pattern>/example/ocpi/*</url-pattern>
-</servlet-mapping>
-```
 
 ## simulated charging station
 
@@ -83,6 +70,24 @@ and following methods has been implemented to use the librarian module OcpiLocat
 <strong> testing </strong>
 
 The bash script `ocpi_put_location.sh`  contains the curl command to put a new location in previous receiver.
+
+<strong> Install and run </strong>
+
+Mapping can be included in file web.xml or as annotation. By example:
+
+
+```
+<servlet>
+  <servlet-name>OcpiTestLocationReceiver</servlet-name>
+  <servlet-class>com.llocer.ev.example.OcpiTestLocationReceiver</servlet-class>
+</servlet>
+
+<servlet-mapping>
+  <servlet-name>OcpiTestLocationReceiver</servlet-name>
+  <url-pattern>/example/ocpi/*</url-pattern>
+</servlet-mapping>
+```
+
 
 ## OCPI location sender
 
